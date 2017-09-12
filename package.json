@@ -1,0 +1,23 @@
+{
+  "name": "collete",
+  "version": "1.0.0",
+  "description": "ColleteApp",
+  "main": "index.js",
+  "dependencies": {
+    "bootstrap": "^3.3.7"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/irvinzio/ColleteFront.git"
+  },
+  "author": "irvinzio",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/irvinzio/ColleteFront/issues"
+  },
+  "homepage": "https://github.com/irvinzio/ColleteFront#readme"
+}
