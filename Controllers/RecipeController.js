@@ -15,10 +15,13 @@
 
     function Recipe($scope, $rootScope,RecipeService,IngredientService,CatalogService,BussinesService,$timeout,JsPopupService){
         var vm = this;
+        vm.IdUnitsId = 11;//13;
+        vm.IdCategoryId = 12;//14;
         vm.recipeJson = {};
         vm.Ingredients = new Array();
         vm.Bussines = undefined;
         vm.Catalog = undefined;
+        vm.CatalogArray = [];
         vm.IngredientSelected = undefined;
         vm.recipeJson.GetCatalog = undefined;
         vm.recipeJson.recipe = {};
@@ -32,6 +35,27 @@
 
         CatalogService.getCatalog().then(function(response) {
             vm.Catalog = response.data;
+            vm.Catalog.forEach(function(obj) {
+                if(vm.CatalogArray[obj.type] === undefined){
+                    vm.CatalogArray.push(obj.type);
+                    vm.CatalogArray[obj.type]=[]
+                    vm.CatalogArray[obj.type].push(obj);  
+                    //if(vm.CatalogArray[obj.type][obj.idType] === undefined){
+                        //vm.CatalogArray[obj.type].push([obj.idType]);
+                        // vm.CatalogArray[obj.type][obj.idType] =[];
+                        // vm.CatalogArray[obj.type][obj.idType].push(obj);
+                    //}      
+                }    
+                else{
+                    vm.CatalogArray[obj.type].push(obj);
+                    //if(vm.CatalogArray[obj.type][obj.idType] === undefined){
+                        // vm.CatalogArray[obj.type].push([obj.idType]);
+                        // vm.CatalogArray[obj.type][obj.idType] =[];
+                        // vm.CatalogArray[obj.type][obj.idType].push(obj);  
+                    //}           
+                }
+            });
+            console.log(vm.CatalogArray);
         },function (error){
           //vm.error("error geting ingredients");
           console.log(error);
@@ -63,7 +87,9 @@
             });
         };
         vm.UpdateInfo = function (data){
-            vm.IngredientSelected = data;            
+            vm.IngredientSelected = data;
+            vm.IngredientSelected.UnitName = vm.CatalogArray[vm.IdUnitsId][data.idUnit].name;
+                       
         };
         vm.UpdateIngredientInfo =  function (ingredient){
             Object.keys(vm.recipeJson.nutrition_facts)
@@ -86,12 +112,12 @@
           };
 
         vm.AddIngredient= function (data){
-            var reqInfo = {'name': data.name,'qty':'1', 'properties': data};
+            var reqInfo = {'name': data.name,'qty':data.qty,'UnitName':data.UnitName, 'properties': data};
             vm.recipeJson.recipe_ingredient.push(reqInfo);
             Object.keys(vm.recipeJson.nutrition_facts)
             .forEach(function eachKey(key) {
                 if(vm.IngredientSelected[key]>0)      
-                    vm.recipeJson.nutrition_facts[key] +=  vm.IngredientSelected[key];
+                    vm.recipeJson.nutrition_facts[key] +=  vm.IngredientSelected[key]*data.qty;
             });  
         };
         vm.AddStep= function (data){
@@ -100,13 +126,14 @@
             vm.StepToAdd = "";
         };
 
-        vm.IngredientconfirmationModal= function (ingedient,index){
+        vm.IngredientconfirmationModal= function (ingredient,index){
+            var qty = ingredient.qty;
             if(JsPopupService.confirmationJs()){
                 vm.recipeJson.recipe_ingredient.splice(index, 1);
                 Object.keys(vm.recipeJson.nutrition_facts)
                 .forEach(function eachKey(key) {
                     if(vm.IngredientSelected[key]>0)      
-                        vm.recipeJson.nutrition_facts[key] -=  vm.IngredientSelected[key]*ingredient.qty;
+                        vm.recipeJson.nutrition_facts[key] -=  vm.IngredientSelected[key]*qty;
                 });
             }
                  

@@ -39,11 +39,13 @@
                         <div class="form-group">
                             <select class="form-control" name="restaurantId" ng-options="bussines as bussines.name for bussines in vm.Bussines track by bussines.id" value="{{bussines.id}}"
                                                   ng-model="vm.recipeJson.recipe.idRestaurant" required>
+                                                  <option value="opt">Select a Restaurant</option>
                             </select>
                           </div>
                           <div class="form-group">
-                              <select class="form-control" name="category" ng-options="catalog as catalog.name for catalog in vm.Catalog track by catalog.id"
+                              <select class="form-control" name="category" ng-options="catalog as catalog.name for catalog in vm.CatalogArray[vm.vm.IdCategoryId] track by catalog.id"
                                                     ng-model="vm.recipeJson.recipe.category" required>
+                                                    <option value="opt">Select a category</option>
                               </select>
                             </div>
                        <div class="form-group">
@@ -62,16 +64,28 @@
            <div class="well">
                <div class="row">
                  <div class="col-md-12 navbar-text">
-                     <form class="form-inline">
-                         <div class="form-group" style="width: 100%">
-                           <label class="sr-only" for="AddIngridient">Add Ingridient</label>
-                           <div class="input-group col-md-10"> 
+                     <form>
+                        <div class="form-group col-md-6">
+                            <input type="text" class="form-control" placeholder="Unit name" disabled ng-model="vm.IngrdientSelected.UnitName">
+                        </div>
+                        <div class="form-group col-md-6">
+                          <div class="input-group"> 
+                            <input type="number" ng-model="vm.IngrdientSelected.qty" 
+                            ng-change="vm.UpdateIngredietnValues(vm.IngrdientSelected)" class="form-control" placeHolder="Quantity" value="1">
+                          </div>
+                        </div>
+                         <div class="form-group col-md-8" >
+                           <div class="input-group"> 
                              <input type="text" ng-model="vm.IngrdientSelected" 
                              ng-change="vm.GetIngredientByName(vm.IngrdientSelected)" class="form-control" placeHolder="Add Ingridient" uib-typeahead="Ingridients as Ingridients.name for Ingridients in vm.Ingredients | filter:{name:$viewValue}"
                              typeahead-on-select="vm.UpdateInfo(vm.IngrdientSelected)" typeahead-show-hint="true" typeahead-min-length="0">
                            </div>
-                           <button type="submit" ng-click="vm.AddIngredient(vm.IngrdientSelected)" class="btn btn-primary"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
                          </div> 
+                         <div class="form-group col-md-4" >
+                            <div class="input-group"> 
+                                <button type="submit" ng-click="vm.AddIngredient(vm.IngrdientSelected)" class="btn btn-primary col-md-12"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
+                            </div>
+                         </div>
                        </form>
                  </div>
                </div>
@@ -99,13 +113,15 @@
                                </tr>
                            </thead>
                            <tbody>
-                               <tr ng-repeat="ingredient in vm.recipeJson.recipe_ingredient">
-                                   <td>
+                               <tr ng-repeat="ingredient in vm.recipeJson.recipe_ingredient">    
+                                <!-- <td>
                                       <span ng-show="ingredient.editMode == null || ingredient.editMode == false">{{ingredient.qty}}</span>
                                     <input type="number" ng-keyup="$event.keyCode == 13 ? vm.IngridientDataCancelEditMode() : null" ng-show="ingredient.editMode == true" ng-model="ingredient.qty" ng-change="vm.UpdateIngredientInfo(ingredient)"
                                     value="{{ingredient.qty}}">
                                   
-                                  </td>
+                                  </td> -->
+                                  <td>{{ingredient.UnitName}}</td>
+                                  <td>{{ingredient.qty}}</td>
                                    <td>{{ingredient.name}}</td>
                                    <td><a href="#recipe" ng-click="vm.IngredientconfirmationModal(ingredient,$index)" title="eliminar"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></a></td>
                                    <td><a href="#recipe" ng-click="vm.updateIngridientData(ingredient)" title="editar"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
