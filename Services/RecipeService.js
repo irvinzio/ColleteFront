@@ -11,7 +11,7 @@ app.service('RecipeService', function($http, $q) {
       return defer.promise;
       
     },
-     'getRecipe': function(id) {
+     'getRecipeById': function(id) {
       var defer = $q.defer();
       $http.get('/api/Recipe/'+id).success(function(resp){
         defer.resolve(resp);
@@ -22,9 +22,10 @@ app.service('RecipeService', function($http, $q) {
     },
     'addRecipe': function(data) {
       var defer = $q.defer();
-      $http.post(baseUrl+'/recipe/setRecipe', data).success(function(resp){
+      $http.post(baseUrl+'/recipe/setRecipe', data).then(function(resp){
         defer.resolve(resp);
-      }).error( function(err) {
+      },function(err) {
+        console.log(err);
         defer.reject(err);
       });
       return defer.promise;

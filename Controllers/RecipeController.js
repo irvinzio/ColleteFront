@@ -23,7 +23,6 @@
         vm.Catalog = undefined;
         vm.CatalogArray = [];
         vm.IngredientSelected = undefined;
-        vm.recipeJson.GetCatalog = undefined;
         vm.recipeJson.recipe = {};
         vm.recipeJson.recipe_ingredient = [];
         vm.recipeJson.recipe_procedure = [];
@@ -32,6 +31,7 @@
         vm.Image = undefined;
         vm.IngredientSelected = {"carbohydrates": 0, "lipids":0, "protein":0, "energyK":0};
         var oldvalue =undefined;
+        vm.FileSize = "500"
 
         CatalogService.getCatalog().then(function(response) {
             vm.Catalog = response.data;
@@ -76,7 +76,7 @@
         });
 
         vm.GetIngredientByName = function(name){ 
-            IngredientService.getIngredientByName(name).then(function(response) {
+            IngredientService.getIngredientNamesByName(name).then(function(response) {
                 vm.Ingredients = [];
                 response.data.forEach(function(data) {
                     vm.Ingredients.push(data);
@@ -86,10 +86,15 @@
               console.log(error);
             });
         };
+
         vm.UpdateInfo = function (data){
-            vm.IngredientSelected = data;
-            vm.IngredientSelected.UnitName = vm.CatalogArray[vm.IdUnitsId][data.idUnit].name;
-                       
+            IngredientService.getIngredientByName(data.name).then(function(response) {
+                vm.IngredientSelected = response.data[0];  
+                vm.IngredientSelected.Unit = {'IdUnit':vm.IdUnitsId,'name': vm.CatalogArray[vm.IdUnitsId][data.idUnit].name};  
+            },function (error){
+              //vm.error("error geting ingredients");
+              console.log(error);
+            });            
         };
         vm.UpdateIngredientInfo =  function (ingredient){
             Object.keys(vm.recipeJson.nutrition_facts)
@@ -112,7 +117,9 @@
           };
 
         vm.AddIngredient= function (data){
-            var reqInfo = {'name': data.name,'qty':data.qty,'UnitName':data.UnitName, 'properties': data};
+            if(!data.qty)
+                data.qty = 1;
+            var reqInfo = {'name': data.name,'qty':data.qty,'idUnit':data.idUnit, 'properties': data,'idIngredient':data.id};
             vm.recipeJson.recipe_ingredient.push(reqInfo);
             Object.keys(vm.recipeJson.nutrition_facts)
             .forEach(function eachKey(key) {
@@ -139,21 +146,65 @@
                  
         };
 
-        vm.StepsconfirmationModal= function (id){
+        vm.StepsconfirmationModal= function (step,index){
             if(JsPopupService.confirmationJs())
-                vm.StepsList.splice(id, 1);
+                vm.recipeJson.recipe_procedure.splice(index, 1);
         };
 
         vm.SaveRecepi= function(data){
+            data.nutrition_facts.energeticContent =  data.nutrition_facts.energyK;
+            data.nutrition_facts.totalFats = data.nutrition_facts.lipids;
+            data.nutrition_facts.idUnit = 0;
+            data.nutrition_facts.transAG = 0;
+            delete data.nutrition_facts['grossWeight'];
+            delete data.nutrition_facts['netWeight'];
+            delete data.nutrition_facts['energyK'];
+            delete data.nutrition_facts['energyJ'];
+            delete data.nutrition_facts['lipids'];
+            delete data.nutrition_facts['glycemicIndex'];
+            delete data.nutrition_facts['glycemicLoad'];
+            delete data.nutrition_facts['ethanol'];
+            delete data.nutrition_facts['posphorus'];
+
+            data.recipe.category = data.recipe.category.id;
+            data.recipe.idRestaurant =data.recipe.idRestaurant.id;
+            data.recipe_ingredient.forEach(function(ingredient){
+                delete ingredient['properties'];
+                delete ingredient['name'];
+            });
+            data.recipe = data.recipe;
+            console.log(data);
+
             RecipeService.addRecipe(data).then(function(response) {
                 console.log("The Recipe was creating Successfully");
                 //vm.success("The Recipe was creating Successfully");
             }, function(err) {
-                console.log("There was an error creating the Recipe");
+                console.log("There was an error creating the Recipe"+ err);
                 //vm.error("There was an error creating the Recipe");
             });
             $('.addModal').modal('hide');
         };
+
+        $scope.LoadThumbnail = function (input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+        
+                reader.onload = function (e) {
+                    $('#RecepiImg')
+                        .attr('src', e.target.result)
+                        .width(200)
+                        .height(200);
+                };
+                
+                reader.onloadend = function() {
+                    console.log(vm.recipeJson.recipe.url);
+                    console.log('RESULT', reader.result);
+                    vm.recipeJson.recipe.url = reader.result;
+                  }
+                reader.readAsDataURL(input.files[0]);
+                
+            }
+        }
     }    
 })();
 function LoadThumbnail(input) {
@@ -169,77 +220,3 @@ function LoadThumbnail(input) {
         reader.readAsDataURL(input.files[0]);
     }
 }
-/*
-recipe:
-idRestaurant
-category
-
-recipe_ingredient:
-idUnit
-
-recipe_nutritional
-
-"recipe": [ {
-    "idRestaurant": 1,
-    "name": "Tostada",
-    "url": "https://dietas.ninja/imagenes/como-hacer-la-de-la-sopa-de-tomate.jpg",
-    "prepareTime": 20,
-    "diners": 2,
-    "category": 1,
-    "createDate": "2017-09-01 12:18:38"
-}],
-"recipe_ingredient":[{
-    "idIngredient": 2,
-    "qty": 3,
-    "idUnit": 0
-}],
-"recipe_nutritional": [ {
-    "qty": 1,
-    "idUnit": 0
-}],
-"recipe_procedure": [{
-    "step1": [{
-        "description": "paso1",
-        "orderNo": 1
-        }],
-    "step2": [{
-        "description": "paso2",
-        "orderNo": 2
-        }]
-}],
-"nutrition_facts": [{
-    "portion": 2.10, 
-    "idUnit": 0.00,
-    "energeticContent": 1000.00,
-    "protein": 10.00,
-    "totalFats": 1000.00,
-    "saturatedAG": 10.00,
-    "monoAG": 10.00,
-    "poliAG": 10.00,
-    "transAG": 10.00,
-    "cholesterol": 10.00,
-    "sodium": 10.00,
-    "carbohydrates": 10.00,
-    "sugarG": 10.00,
-    "fiber": 10.00,
-    "vitaminA": 10.00,
-    "ascorbicAcid": 10.00,
-    "folicAcid": 10.00,
-    "calcium": 10.00,
-    "iron": 10.00,
-    "potassium": 10.00,
-    "selenium": 10.00,
-}]
-} 
-
-"recipe_procedure": [
-        {
-        "description": "paso1",
-        "orderNo": 1
-        },
-        {
-        "description": "paso2",
-        "orderNo": 2
-        }
-]
-*/

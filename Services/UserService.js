@@ -3,7 +3,7 @@ app.service('UsersService', function($http, $q) {
   return {
     'getUsers': function() {
       var defer = $q.defer();
-      $http.get('/api/Users').success(function(resp){
+      $http.get(baseUrl+'/recipe/setRecipe').success(function(resp){
         defer.resolve(resp);
       }).error( function(err) {
         defer.reject(err);

@@ -11,9 +11,20 @@ app.service('IngredientService', function($http, $q) {
       return defer.promise;
       
     },
-    'getIngredientByName': function(name) {
+    'getIngredientNamesByName': function(name) {
       var defer = $q.defer();
       $http.get(baseUrl+'/recipe/getIngredients?name='+name).then(function(resp){
+          defer.resolve(resp);
+      },function (error){
+          console.log(error);
+          defer.reject(error);
+      });
+      return defer.promise;
+      
+    },
+    'getIngredientByName': function(name) {
+      var defer = $q.defer();
+      $http.get(baseUrl+'/recipe/getIngredient?name='+name).then(function(resp){
           defer.resolve(resp);
       },function (error){
           console.log(error);
