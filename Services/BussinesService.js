@@ -1,5 +1,4 @@
 app.service('BussinesService', function($http, $q) {
-    var baseUrl = 'http://localhost:3000';
     return {
       'GetBussines': function() {
         var defer = $q.defer();

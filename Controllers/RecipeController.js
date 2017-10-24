@@ -31,7 +31,7 @@
         vm.Image = undefined;
         vm.IngredientSelected = {"carbohydrates": 0, "lipids":0, "protein":0, "energyK":0};
         var oldvalue =undefined;
-        vm.FileSize = "500"
+        vm.FileSize = "500";
 
         CatalogService.getCatalog().then(function(response) {
             vm.Catalog = response.data;
