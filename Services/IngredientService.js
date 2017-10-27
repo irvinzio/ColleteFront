@@ -1,8 +1,9 @@
 app.service('IngredientService', function($http, $q,Constants) {
+  var baseUrl = Constants.BaseUrl;
   return {
     'getIngredient': function() {
       var defer = $q.defer();
-      $http.get(Constants.BaseUrl+'/recipe/getIngredient').then(function(resp){
+      $http.get(baseUrl+'/recipe/getIngredient').then(function(resp){
         defer.resolve(resp);
       },function (error){
           defer.reject(error);
@@ -12,7 +13,7 @@ app.service('IngredientService', function($http, $q,Constants) {
     },
     'getIngredientNamesByName': function(name) {
       var defer = $q.defer();
-      $http.get(Constants.BaseUrl+'/recipe/getIngredients?name='+name).then(function(resp){
+      $http.get(baseUrl+'/recipe/getIngredients?name='+name).then(function(resp){
           defer.resolve(resp);
       },function (error){
           console.log(error);
@@ -23,7 +24,7 @@ app.service('IngredientService', function($http, $q,Constants) {
     },
     'getIngredientByName': function(name) {
       var defer = $q.defer();
-      $http.get(Constants.BaseUrl+'/recipe/getIngredient?name='+name).then(function(resp){
+      $http.get(baseUrl+'/recipe/getIngredient?name='+name).then(function(resp){
           defer.resolve(resp);
       },function (error){
           console.log(error);

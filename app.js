@@ -1,25 +1,16 @@
 (function () {
     app = angular.module('app', ['ngRoute','ngAnimate', 'ui.bootstrap']);    
-     /*
-    .config(config);
-
-    config.$inject = ['$routeProvider','$locationProvider'];
-   
-    function config($routeProvider,$locationProvider) {
-        $locationProvider.html5Mode(false);
-        console.log('entro a routes');
+    app.config(function($routeProvider) {
         $routeProvider
-            .when('/funcionarios/:id', {
-                templateUrl: 'templates/funcionarios/show.html',
-                controller: 'funcionariosInfoCtrl',
-                controllerAs: 'vm'
-            })
-            .otherwise({
-                redirectTo: '/'
-            });
-    } 
-    */
-
+        .when('/', {
+            templateUrl: 'views/AddRecipe.html',
+            controller: 'RecipeCtrl as vm',
+        })
+        .when('/Recipe', {
+        templateUrl: 'views/AddRecipe.html',
+        controller: 'RecipeCtrl as vm',
+        });
+    });
     // app.
     // config(function(envServiceProvider) {
     //     // set the domains and variables for each environment 

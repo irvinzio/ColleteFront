@@ -1,8 +1,9 @@
 app.service('RecipeService',function($http, $q,Constants) {
+  var baseurl = Constants.BaseUrl;
   return {
     'addRecipe': function(data) {
       var defer = $q.defer();
-      $http.post(Constants.BaseUrl+'/recipe/setRecipe', data).then(function(resp){
+      $http.post(baseurl+'/recipe/setRecipe', data).then(function(resp){
         defer.resolve(resp);
       },function(err) {
         console.log(err);

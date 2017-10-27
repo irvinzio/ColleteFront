@@ -1,14 +1,5 @@
 (function(){
     'use strict';
-    app.config(['$routeProvider',
-      function($routeProvider) {
-        $routeProvider
-        .when('/Recipe', {
-          templateUrl: '../AddRecipe.html',
-          controller: 'RecipeCtrl as vm',
-        })
-      }]);
-    
     app.controller('RecipeCtrl',Recipe);
 
     Recipe.$inject=['$scope', '$rootScope','RecipeService','IngredientService','CatalogService','BussinesService','$timeout','JsPopupService'];
@@ -40,19 +31,9 @@
                     vm.CatalogArray.push(obj.type);
                     vm.CatalogArray[obj.type]=[]
                     vm.CatalogArray[obj.type].push(obj);  
-                    //if(vm.CatalogArray[obj.type][obj.idType] === undefined){
-                        //vm.CatalogArray[obj.type].push([obj.idType]);
-                        // vm.CatalogArray[obj.type][obj.idType] =[];
-                        // vm.CatalogArray[obj.type][obj.idType].push(obj);
-                    //}      
                 }    
                 else{
-                    vm.CatalogArray[obj.type].push(obj);
-                    //if(vm.CatalogArray[obj.type][obj.idType] === undefined){
-                        // vm.CatalogArray[obj.type].push([obj.idType]);
-                        // vm.CatalogArray[obj.type][obj.idType] =[];
-                        // vm.CatalogArray[obj.type][obj.idType].push(obj);  
-                    //}           
+                    vm.CatalogArray[obj.type].push(obj);    
                 }
             });
             console.log(vm.CatalogArray);
@@ -95,7 +76,7 @@
               //vm.error("error geting ingredients");
               console.log(error);
             });            
-        };
+            };
         vm.UpdateIngredientInfo =  function (ingredient){
             Object.keys(vm.recipeJson.nutrition_facts)
             .forEach(function eachKey(key) {
@@ -142,8 +123,7 @@
                     if(vm.IngredientSelected[key]>0)      
                         vm.recipeJson.nutrition_facts[key] -=  vm.IngredientSelected[key]*qty;
                 });
-            }
-                 
+            }     
         };
 
         vm.StepsconfirmationModal= function (step,index){
@@ -207,16 +187,3 @@
         }
     }    
 })();
-function LoadThumbnail(input) {
-    if (input.files && input.files[0]) {
-        var reader = new FileReader();
-
-        reader.onload = function (e) {
-            $('#RecepiImg')
-                .attr('src', e.target.result)
-                .width(200)
-                .height(200);
-        };
-        reader.readAsDataURL(input.files[0]);
-    }
-}
