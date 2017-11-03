@@ -6,8 +6,8 @@
 
     function Recipe($scope, $rootScope,RecipeService,IngredientService,CatalogService,BussinesService,$timeout,JsPopupService){
         var vm = this;
-        vm.IdUnitsId = 11;//13;
-        vm.IdCategoryId = 12;//14;
+        vm.IdUnitsId = 13;//13;
+        vm.IdCategoryId = 14;//14;
         vm.recipeJson = {};
         vm.Ingredients = new Array();
         vm.Bussines = undefined;
@@ -69,7 +69,7 @@
         };
 
         vm.UpdateInfo = function (data){
-            IngredientService.getIngredientByName(data.name).then(function(response) {
+            IngredientService.getIngredientById(data.id).then(function(response) {
                 vm.IngredientSelected = response.data[0];  
                 vm.IngredientSelected.Unit = {'IdUnit':vm.IdUnitsId,'name': vm.CatalogArray[vm.IdUnitsId][data.idUnit].name};  
             },function (error){

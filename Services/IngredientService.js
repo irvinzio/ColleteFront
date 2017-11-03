@@ -22,9 +22,9 @@ app.service('IngredientService', function($http, $q,Constants) {
       return defer.promise;
       
     },
-    'getIngredientByName': function(name) {
+    'getIngredientById': function(id) {
       var defer = $q.defer();
-      $http.get(baseUrl+'/recipe/getIngredient?name='+name).then(function(resp){
+      $http.get(baseUrl+'/recipe/getIngredient?id='+id).then(function(resp){
           defer.resolve(resp);
       },function (error){
           console.log(error);

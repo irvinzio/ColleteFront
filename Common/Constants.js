@@ -1,3 +1,3 @@
 app.service('Constants', function() {
-    this.BaseUrl = 'http://vivediabetes.ddns.net:3000';
+    this.BaseUrl = 'http://localhost:3000';
   });
