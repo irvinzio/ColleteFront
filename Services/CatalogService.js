@@ -11,3 +11,12 @@ app.service('CatalogService',function($http, $q,Constants) {
         return defer.promise;    
       }
   }});
+
+  app.service('CategoryService', function($http, $q) {
+    return {
+      'GetCategories': function() {
+        var defer = $q.defer();
+          defer.resolve([{'id': 0, name : 'Entrada'},{'id': 1, name : 'Ensalada'},{'id': 2, name : 'Crema o Sopa'},{'id': 3, name : 'Plato Fuerte'},{'id': 4, name : 'Sopa'}]);
+        return defer.promise;
+      }    
+  }});
