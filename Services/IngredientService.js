@@ -65,5 +65,98 @@ app.service('IngredientService', function($http, $q,Constants) {
       }
       defer.resolve(IgredientProperties);
       return defer.promise;  
+    },
+    'getIngredientPorpertiesDisplayName': function(){
+        var defer = $q.defer();
+        var IgredientProperties = {
+            portion : 
+            {                
+                'displayName': 'porcion'
+            },
+      
+            grossWeight:
+            {                
+                'displayName': 'Peso Bruto'
+            },
+            netWeight:{                
+                'displayName': 'Peso Neto'
+            },
+            energyK:{                
+                'displayName': 'Energia K'
+            },
+            energyJ:{                
+                'displayName': 'Energia J'
+            },         
+            protein:{                
+                'displayName': 'Proteina'
+            },            
+            lipids :{                
+                'displayName': 'Lipidos'
+            },           
+            carbohydrates :{
+                
+                'displayName': 'Carbohidratos'
+            },            
+            fiber:{                
+                'displayName': 'Fibra'
+            },            
+            saturatedAG :{
+                
+                'displayName': 'AG Saturado'
+            },            
+            monoAG:{                
+                'displayName': 'Mono AG'
+            },
+            poliAG:{                
+                'displayName': 'Poli AG'
+            },            
+            cholesterol:{                
+                'displayName': 'colesterol'
+            },            
+            vitaminA:{                
+                'displayName': 'Vitamina A'    
+            },
+            ascorbicAcid:{                
+                'displayName': 'ácido ascórbico'    
+            },
+            folicAcid:{                
+                'displayName': 'Acido Folico'
+            },          
+            calcium:{                
+                'displayName': 'Calcio'
+            },           
+            iron:{                
+                'displayName': 'Hierro'
+            },           
+            sodium:{                
+                'displayName': 'Sodio'
+            },           
+            potassium:{                
+                'displayName': 'Potasio'
+            },           
+            sugarG:{                
+                'displayName': 'Azucar G'
+            },            
+            glycemicvalue :{                
+                'displayName': 'Nivel de Glucosa'
+            },
+            glycemicIndex :{
+                'displayName': 'Indice glicemico'
+            },         
+            glycemicLoad:{                
+                'displayName': 'Carga glicemica'
+            },            
+            selenium:{                
+                'displayName': 'Selenio'
+            },            
+            ethanol:{                
+                'displayName': 'Etanol'
+            },            
+            posphorus:{                
+                'displayName': 'fósforo'
+            }  
+        }     
+        defer.resolve(IgredientProperties);
+        return defer.promise;
     }
 }});

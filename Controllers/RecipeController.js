@@ -6,24 +6,31 @@
 
     function Recipe($scope, $rootScope,RecipeService,IngredientService,CatalogService,BussinesService,$timeout,JsPopupService,CategoryService){
         var vm = this;
-        vm.IdUnitsId = 13;//13;
-        vm.IdCategoryId = 14;//14;
-        vm.recipeJson = {};
+        vm.IdUnitsId = 13;
+        vm.IdCategoryId = 14;
         vm.Ingredients = new Array();
         vm.Bussines = undefined;
         vm.Catalog = undefined;
         vm.CatalogArray = [];
         vm.IngredientSelected = undefined;
-        vm.recipeJson.recipe = {};
-        vm.recipeJson.recipe.url = "fake path";
-        vm.recipeJson.recipe_ingredient = [];
-        vm.recipeJson.recipe_procedure = [];
-        vm.recipeJson.nutrition_facts = {};
         vm.StepToAdd = "";
         vm.Image = undefined;
-        vm.IngredientSelected = {"carbohydrates": 0, "lipids":0, "protein":0, "energyK":0};
-        var oldvalue =undefined;
         vm.FileSize = "500";
+        var oldvalue =undefined;
+
+        vm.initRecipeValues =  function (){
+            vm.recipeJson = {};
+            vm.recipeJson.recipe = {};
+            vm.recipeJson.recipe.url = "fake path";
+            vm.recipeJson.recipe_ingredient = [];
+            vm.recipeJson.recipe_procedure = [];
+            vm.recipeJson.nutrition_facts = {};
+            vm.IngredientSelected = {"carbohydrates": 0, "lipids":0, "protein":0, "energyK":0};
+            vm.recipeJson.recipe.idRestaurant = {id:1};
+        };
+
+        vm.initRecipeValues();
+
 
         CatalogService.getCatalog().then(function(response) {
             vm.Catalog = response.data;
@@ -44,7 +51,6 @@
         //temp get for category
         CategoryService.GetCategories().then(function(response) {
             vm.Category = response;   
-            console.log(response); 
         },function (error){
           //vm.error("error geting ingredients");
           console.log(error);
@@ -58,7 +64,15 @@
         });
 
         IngredientService.getIngredientProperties().then(function(response) {
-            vm.recipeJson.nutrition_facts = response;  
+            vm.recipeJson.nutrition_facts = response; 
+            console.log(vm.recipeJson.nutrition_facts); 
+        },function (error){
+          //vm.error("error geting ingredients");
+          console.log(error);
+        });
+
+        IngredientService.getIngredientPorpertiesDisplayName().then(function(response) {
+            vm.IngredientDisplayName = response;  
         },function (error){
           //vm.error("error geting ingredients");
           console.log(error);
@@ -155,7 +169,7 @@
             delete data.nutrition_facts['posphorus'];
 
             data.recipe.category = data.recipe.category.id;
-            data.recipe.idRestaurant =data.recipe.idRestaurant.id;
+            data.recipe.idRestaurant = data.recipe.idRestaurant.id;
             data.recipe_ingredient.forEach(function(ingredient){
                 delete ingredient['properties'];
                 delete ingredient['name'];
