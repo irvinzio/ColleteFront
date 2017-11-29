@@ -1,4 +1,5 @@
 <div class="container" ng-controller="RecipeCtrl as vm">
+    <div ng-include="'views/alerts.html'"></div>
        <div class="row">
          <div class="col-md-6">
            <div class="well">
@@ -34,24 +35,24 @@
                  <div class="col-md-12 navbar-text">
                      <form>
                         <div class="form-group col-md-6">
-                            <input type="text" class="form-control" placeholder="Unidad" disabled ng-model="vm.IngrdientSelected.idUnit.Name">
+                            <input type="text" class="form-control" placeholder="Unidad" disabled ng-model="vm.IngredientSelected.Unit.Name">
                         </div>
                         <div class="form-group col-md-6">
                           <div class="input-group"> 
-                            <input type="number" ng-model="vm.IngrdientSelected.qty" 
-                            ng-change="vm.UpdateIngredietnValues(vm.IngrdientSelected)" class="form-control" placeHolder="Cantidad" value="1">
+                            <input type="number" ng-model="vm.IngredientSelected.qty" 
+                            ng-change="vm.UpdateIngredietnValues(vm.IngredientSelected)" class="form-control" placeHolder="Cantidad" value="1">
                           </div>
                         </div>
                          <div class="form-group col-md-8" >
                            <div class="input-group"> 
-                             <input type="text" ng-model="vm.IngrdientSelected" 
-                             ng-change="vm.GetIngredientByName(vm.IngrdientSelected)" class="form-control" placeHolder="Ingrediente" uib-typeahead="Ingridients as Ingridients.name for Ingridients in vm.Ingredients | filter:{name:$viewValue}"
-                             typeahead-on-select="vm.UpdateInfo(vm.IngrdientSelected)" typeahead-show-hint="true" typeahead-min-length="0">
+                             <input type="text" ng-model="vm.IngredientSelected" 
+                             ng-change="vm.GetIngredientByName(vm.IngredientSelected)" class="form-control" placeHolder="Ingrediente" uib-typeahead="Ingridients as Ingridients.name for Ingridients in vm.Ingredients | filter:{name:$viewValue}"
+                             typeahead-on-select="vm.UpdateInfo(vm.IngredientSelected)" typeahead-show-hint="true" typeahead-min-length="0">
                            </div>
                          </div> 
                          <div class="form-group col-md-4" >
                             <div class="input-group"> 
-                                <button type="submit" ng-click="vm.AddIngredient(vm.IngrdientSelected)" class="btn btn-primary col-md-12"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
+                                <button type="submit" ng-click="vm.AddIngredient(vm.IngredientSelected)" class="btn btn-primary col-md-12"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
                             </div>
                          </div>
                        </form>
@@ -74,11 +75,14 @@
                  <div class="row">
                    <div class="col-md-12">
                      <!-- Table -->
+                     <h4>Ingredientes</h4>
                      <table class="table table-striped">
                            <thead>
-                               <tr>
-                                   <th>Ingrediente</th>
-                               </tr>
+                              <tr>
+                                  <th>Unidad</th>
+                                  <th>Cantidad</th>
+                                  <th>Nombre</th>
+                              </tr>
                            </thead>
                            <tbody>
                                <tr ng-repeat="ingredient in vm.recipeJson.recipe_ingredient">    
@@ -88,7 +92,7 @@
                                     value="{{ingredient.qty}}">
                                   
                                   </td> -->
-                                  <td>{{ingredient.UnitName}}</td>
+                                  <td>{{vm.CatalogArray[vm.UnitsId][ingredient.idUnit].name}}</td>
                                   <td>{{ingredient.qty}}</td>
                                    <td>{{ingredient.name}}</td>
                                    <td><a href="#recipe" ng-click="vm.IngredientconfirmationModal(ingredient,$index)" title="eliminar"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a></a></td>
@@ -116,12 +120,14 @@
                  </div>   
                  <div class="row">
                    <div class="col-md-12">
+                     <h4>Pasos</h4>
                      <!-- Table -->
                      <table class="table table-striped">
                            <thead>
-                               <tr>
-                                   <th>Pasos</th>
-                               </tr>
+                              <tr>
+                                  <th>#</th>
+                                  <th>Descripcion</th>
+                              </tr>
                            </thead>
                            <tbody>
                                <tr ng-repeat="step in vm.recipeJson.recipe_procedure ">

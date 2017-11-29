@@ -6,8 +6,8 @@
 
     function Recipe($scope, $rootScope,RecipeService,IngredientService,CatalogService,BussinesService,$timeout,JsPopupService,CategoryService){
         var vm = this;
-        vm.IdUnitsId = 13;
-        vm.IdCategoryId = 14;
+        vm.UnitsId = 13;
+        vm.CategoryId = 15;
         vm.Ingredients = new Array();
         vm.Bussines = undefined;
         vm.Catalog = undefined;
@@ -44,37 +44,38 @@
                     vm.CatalogArray[obj.type].push(obj);    
                 }
             });
+            vm.Category = vm.CatalogArray[vm.CategoryId];
+            console.log(vm.Category);
         },function (error){
-          //vm.error("error geting ingredients");
+          vm.error(error);
           console.log(error);
         });
-        //temp get for category
-        CategoryService.GetCategories().then(function(response) {
-            vm.Category = response;   
-        },function (error){
-          //vm.error("error geting ingredients");
-          console.log(error);
-        });
+        // //temp get for category
+        // CategoryService.GetCategories().then(function(response) {
+        //     vm.Category = response;   
+        // },function (error){
+        //   vm.error(error);
+        //   console.log(error);
+        // });
 
         BussinesService.GetBussines().then(function(response) {
             vm.Bussines = response;    
         },function (error){
-          //vm.error("error geting ingredients");
+          vm.error(error);
           console.log(error);
         });
 
         IngredientService.getIngredientProperties().then(function(response) {
             vm.recipeJson.nutrition_facts = response; 
-            console.log(vm.recipeJson.nutrition_facts); 
         },function (error){
-          //vm.error("error geting ingredients");
+          vm.error(error);
           console.log(error);
         });
 
         IngredientService.getIngredientPorpertiesDisplayName().then(function(response) {
             vm.IngredientDisplayName = response;  
         },function (error){
-          //vm.error("error geting ingredients");
+          vm.error(error);
           console.log(error);
         });
 
@@ -85,7 +86,7 @@
                     vm.Ingredients.push(data);
                   });      
             },function (error){
-              //vm.error("error geting ingredients");
+              vm.error(error);
               console.log(error);
             });
         };
@@ -93,12 +94,12 @@
         vm.UpdateInfo = function (data){
             IngredientService.getIngredientById(data.id).then(function(response) {
                 vm.IngredientSelected = response.data[0];  
-                vm.IngredientSelected.Unit = {'IdUnit':vm.IdUnitsId,'name': vm.CatalogArray[vm.IdUnitsId][data.idUnit].name};  
+                vm.IngredientSelected.Unit = {'IdUnit':response.data[0].idUnit,'Name': vm.CatalogArray[vm.UnitsId][response.data[0].idUnit].name};
             },function (error){
-              //vm.error("error geting ingredients");
+              vm.error(error);
               console.log(error);
             });            
-            };
+        };
         vm.UpdateIngredientInfo =  function (ingredient){
             Object.keys(vm.recipeJson.nutrition_facts)
             .forEach(function eachKey(key) {
@@ -120,15 +121,17 @@
           };
 
         vm.AddIngredient= function (data){
+            console.log(data);
             if(!data.qty)data.qty = 1;
-            var reqInfo = {'name': data.name,'qty':data.qty,'idUnit':data.idUnit, 'properties': data,'idIngredient':data.id};
+            var reqInfo = {'name': data.name,'qty':data.qty,'idUnit':data.Unit.IdUnit, 'properties': data,'idIngredient':data.id};
             vm.recipeJson.recipe_ingredient.push(reqInfo);
             Object.keys(vm.recipeJson.nutrition_facts)
             .forEach(function eachKey(key) {
                 if(vm.IngredientSelected[key]>0)      
                     vm.recipeJson.nutrition_facts[key] +=  vm.IngredientSelected[key]*data.qty;
             });
-            vm.IngrdientSelected = [];
+            console.log(vm.recipeJson.recipe_ingredient);
+            vm.IngredientSelected = [];
         };
         vm.AddStep= function (data){
             var reqInfo = {'description': data,'orderNo':vm.recipeJson.recipe_procedure.length + 1 };
@@ -186,6 +189,14 @@
             });
             $('.addModal').modal('hide');
         };
+        vm.error = function(error){
+            vm.ErrorMessage = error;
+            $('#ErrorMessage').show();
+        };
+        vm.success = function(success){
+            vm.SuccessMessage = success;
+            $('#SuccessMessage').show();
+        };
 
         $scope.LoadThumbnail = function (input) {
             if (input.files && input.files[0]) {
@@ -196,18 +207,17 @@
                         .attr('src', e.target.result)
                         .width(200)
                         .height(200);
-                };
-                
+                };               
                 reader.onloadend = function() {
                     vm.recipeJson.recipe.url = reader.result;
                   }
                 reader.readAsDataURL(input.files[0]);
-                
+                vm.uploadFile(input.files);
             }
         }
 
-        $scope.upload = function(fileList) {
-            var url = 'http://localhost:3000/picture/upload';
+        vm.uploadFile = function(fileList) {
+            var url = 'http://vivediabetes.ddns.net:3000/Recipe/uploadImage';
             var config = { headers: { 'Content-Type': undefined },
                            transformResponse: angular.identity
                          };
