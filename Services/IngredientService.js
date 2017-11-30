@@ -102,13 +102,13 @@ app.service('IngredientService', function($http, $q,Constants) {
             },            
             saturatedAG :{
                 
-                'displayName': 'AG Saturado'
+                'displayName': 'Acidos Grasos Saturados'
             },            
             monoAG:{                
-                'displayName': 'Mono AG'
+                'displayName': 'Acidos Grasos Monoinsataturados'
             },
             poliAG:{                
-                'displayName': 'Poli AG'
+                'displayName': 'Acidos Grasos Poliinsaturados'
             },            
             cholesterol:{                
                 'displayName': 'colesterol'
@@ -135,7 +135,7 @@ app.service('IngredientService', function($http, $q,Constants) {
                 'displayName': 'Potasio'
             },           
             sugarG:{                
-                'displayName': 'Azucar G'
+                'displayName': 'Azucar'
             },            
             glycemicvalue :{                
                 'displayName': 'Nivel de Glucosa'

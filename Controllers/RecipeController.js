@@ -2,9 +2,9 @@
     'use strict';
     app.controller('RecipeCtrl',Recipe);
 
-    Recipe.$inject=['$scope', '$rootScope','RecipeService','IngredientService','CatalogService','BussinesService','$timeout','JsPopupService','CategoryService'];
+    Recipe.$inject=['$scope', '$rootScope','RecipeService','IngredientService','CatalogService','BussinesService','$timeout','JsPopupService'];
 
-    function Recipe($scope, $rootScope,RecipeService,IngredientService,CatalogService,BussinesService,$timeout,JsPopupService,CategoryService){
+    function Recipe($scope, $rootScope,RecipeService,IngredientService,CatalogService,BussinesService,$timeout,JsPopupService){
         var vm = this;
         vm.UnitsId = 13;
         vm.CategoryId = 15;
@@ -129,6 +129,7 @@
             .forEach(function eachKey(key) {
                 if(vm.IngredientSelected[key]>0)      
                     vm.recipeJson.nutrition_facts[key] +=  vm.IngredientSelected[key]*data.qty;
+                    vm.recipeJson.nutrition_facts[key] =  vm.recipeJson.nutrition_facts[key].round(2);
             });
             console.log(vm.recipeJson.recipe_ingredient);
             vm.IngredientSelected = [];
@@ -147,6 +148,7 @@
                 .forEach(function eachKey(key) {
                     if(vm.IngredientSelected[key]>0)      
                         vm.recipeJson.nutrition_facts[key] -=  vm.IngredientSelected[key]*qty;
+                        vm.recipeJson.nutrition_facts[key] =  vm.recipeJson.nutrition_facts[key].round(2);
                 });
             }     
         };
@@ -155,39 +157,42 @@
             if(JsPopupService.confirmationJs())
                 vm.recipeJson.recipe_procedure.splice(index, 1);
         };
-
+        
         vm.SaveRecepi= function(data){
-            data.nutrition_facts.energeticContent =  data.nutrition_facts.energyK;
-            data.nutrition_facts.totalFats = data.nutrition_facts.lipids;
-            data.nutrition_facts.idUnit = 0;
-            data.nutrition_facts.transAG = 0;
-            delete data.nutrition_facts['grossWeight'];
-            delete data.nutrition_facts['netWeight'];
-            delete data.nutrition_facts['energyK'];
-            delete data.nutrition_facts['energyJ'];
-            delete data.nutrition_facts['lipids'];
-            delete data.nutrition_facts['glycemicIndex'];
-            delete data.nutrition_facts['glycemicLoad'];
-            delete data.nutrition_facts['ethanol'];
-            delete data.nutrition_facts['posphorus'];
+            var recipeAux = data;
+            recipeAux.nutrition_facts.energeticContent =  data.nutrition_facts.energyK;
+            recipeAux.nutrition_facts.totalFats = data.nutrition_facts.lipids;
+            recipeAux.nutrition_facts.idUnit = 0;
+            recipeAux.nutrition_facts.transAG = 0;
+            delete recipeAux.nutrition_facts['grossWeight'];
+            delete recipeAux.nutrition_facts['netWeight'];
+            delete recipeAux.nutrition_facts['energyK'];
+            delete recipeAux.nutrition_facts['energyJ'];
+            delete recipeAux.nutrition_facts['lipids'];
+            delete recipeAux.nutrition_facts['glycemicIndex'];
+            delete recipeAux.nutrition_facts['glycemicLoad'];
+            delete recipeAux.nutrition_facts['ethanol'];
+            delete recipeAux.nutrition_facts['posphorus'];
 
-            data.recipe.category = data.recipe.category.id;
-            data.recipe.idRestaurant = data.recipe.idRestaurant.id;
-            data.recipe_ingredient.forEach(function(ingredient){
+            recipeAux.recipe.category = recipeAux.recipe.category.id;
+            recipeAux.recipe.idRestaurant = recipeAux.recipe.idRestaurant.id;
+            recipeAux.recipe_ingredient.forEach(function(ingredient){
                 delete ingredient['properties'];
                 delete ingredient['name'];
             });
-            data.recipe = data.recipe;
-            console.log(data);
+            recipeAux.recipe_nutritional =  {
+                "qty": 1,
+                "idUnit": 0
+            },
+            console.log(recipeAux);
 
             RecipeService.addRecipe(data).then(function(response) {
                 console.log("The Recipe was creating Successfully");
-                //vm.success("The Recipe was creating Successfully");
+                vm.success("The Recipe was creating Successfully");
             }, function(err) {
                 console.log("There was an error creating the Recipe"+ err);
-                //vm.error("There was an error creating the Recipe");
+                vm.error("There was an error creating the Recipe"+ err);
             });
-            $('.addModal').modal('hide');
         };
         vm.error = function(error){
             vm.ErrorMessage = error;
@@ -228,3 +233,56 @@
         };
     }    
 })();
+
+// {
+// 	"recipe": {
+// 		"idRestaurant": 1,
+// 		"name": "Tostada",
+// 		"url": "https://dietas.ninja/imagenes/como-hacer-la-de-la-sopa-de-tomate.jpg",
+//             "prepareTime": 20,
+//             "diners": 2,
+// 		"category": 1
+// 	},
+// 	"recipe_ingredient":[{
+// 		"idIngredient": 2,
+// 		"qty": 3,
+// 		"idUnit": 0
+// 	}],
+// 	"recipe_nutritional":  {
+// 		"qty": 1,
+// 		"idUnit": 0
+// 	},
+// 	"recipe_procedure": [
+// 		{
+// 		"description": "paso1",
+// 		"orderNo": 1
+// 		},
+// 		{
+// 		"description": "paso2",
+// 		"orderNo": 2
+// 		}
+// 	],
+// 	"nutrition_facts": {
+// 		"portion": 2.10, 
+// 		"idUnit": 0.00,
+// 		"energeticContent": 1000.00,
+// 		"protein": 10.00,
+// 		"totalFats": 1000.00,
+// 		"saturatedAG": 10.00,
+// 		"monoAG": 10.00,
+// 		"poliAG": 10.00,
+// 		"transAG": 10.00,
+// 		"cholesterol": 10.00,
+// 		"sodium": 10.00,
+// 		"carbohydrates": 10.00,
+// 		"sugarG": 10.00,
+// 		"fiber": 10.00,
+// 		"vitaminA": 10.00,
+// 		"ascorbicAcid": 10.00,
+// 		"folicAcid": 10.00,
+// 		"calcium": 10.00,
+// 		"iron": 10.00,
+// 		"potassium": 10.00,
+// 		"selenium": 10.00
+// 	}
+// }
