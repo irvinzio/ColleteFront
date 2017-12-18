@@ -1,5 +1,5 @@
-<div class="container" ng-controller="RecipeCtrl as vm">
-  <div ng-include="'views/alerts.html'"></div>
+<div class="container" ng-controller="RecipeCtrl">
+  <div ng-include="'views/alerts.html'"></div>  
   <div class="row">
     <div class="col-md-6">
       <div class="well">
@@ -14,7 +14,7 @@
           <div class="col-xs-6 col-md-6">
             <form>
               <div class="form-group">
-                <select class="form-control" name="category" ng-init="vm.recipeJson.recipe.category = vm.Category[0].id" ng-options="catalog as catalog.name for catalog in vm.Category track by catalog.id"
+                <select class="form-control" name="category"ng-options="catalog.name as catalog.name for catalog in vm.Category"
                   ng-model="vm.recipeJson.recipe.category" required>
                 </select>
               </div>
@@ -49,7 +49,7 @@
               </div>
               <div class="form-group col-md-8">
                 <div class="input-group">
-                  <input type="text" ng-model="vm.IngredientSelected" ng-change="vm.GetIngredientByName(vm.IngredientSelected)" class="form-control"
+                  <input type="text" ng-model="vm.IngredientSelected" placeholder="Escribe algun ingrediente" ng-init="vm.IngredientSelected = ''" ng-change="vm.GetIngredientByName(vm.IngredientSelected)" class="form-control"
                     placeHolder="Ingrediente" uib-typeahead="Ingridients as Ingridients.name for Ingridients in vm.Ingredients | filter:{name:$viewValue}"
                     typeahead-on-select="vm.UpdateInfo(vm.IngredientSelected)" typeahead-show-hint="true" typeahead-min-length="0">
                 </div>
@@ -118,13 +118,13 @@
                   <td>{{ingredient.qty}}</td>
                   <td>{{ingredient.name}}</td>
                   <td>
-                    <a href="#recipe" ng-click="vm.IngredientconfirmationModal(ingredient,$index)" title="eliminar">
+                    <a ng-click="vm.IngredientconfirmationModal(ingredient,$index)" title="eliminar">
                       <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                     </a>
                     </a>
                   </td>
                   <td>
-                    <a href="#recipe" ng-click="vm.updateIngridientData(ingredient)" title="editar">
+                    <a ng-click="vm.updateIngridientData(ingredient)" title="editar">
                       <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                     </a>
                     </p>
@@ -170,13 +170,13 @@
                   </td>
                   <td>{{step.description}}</td>
                   <td>
-                    <a href="#recipe" ng-click="vm.StepsconfirmationModal(step,$index)" title="eliminar">
+                    <a ng-click="vm.StepsconfirmationModal($index)" title="eliminar">
                       <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                     </a>
                     </a>
                   </td>
                   <td>
-                    <a href="#recipe" ng-click="vm.updateData(step)" title="editar">
+                    <a ng-click="vm.updateData(step)" title="editar">
                       <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
                     </a>
                     </p>

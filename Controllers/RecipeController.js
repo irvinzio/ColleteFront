@@ -17,7 +17,7 @@
         vm.Image = undefined;
         vm.FileSize = "500";
         var oldvalue =undefined;
-
+        
         vm.initRecipeValues =  function (){
             vm.recipeJson = {};
             vm.recipeJson.recipe = {};
@@ -27,6 +27,9 @@
             vm.recipeJson.nutrition_facts = {};
             vm.IngredientSelected = {"carbohydrates": 0, "lipids":0, "protein":0, "energyK":0};
             vm.recipeJson.recipe.idRestaurant = {id:1};
+            vm.recipeJson.recipe.category = "Entrada";
+            vm.alert= {success:false,Error:false,Message:''}
+            vm.ingredients = [];
         };
 
         vm.initRecipeValues();
@@ -153,7 +156,7 @@
             }     
         };
 
-        vm.StepsconfirmationModal= function (step,index){
+        vm.StepsconfirmationModal= function (index){
             if(JsPopupService.confirmationJs())
                 vm.recipeJson.recipe_procedure.splice(index, 1);
         };
@@ -189,18 +192,22 @@
             RecipeService.addRecipe(data).then(function(response) {
                 console.log("The Recipe was creating Successfully");
                 vm.success("The Recipe was creating Successfully");
+                vm.initRecipeValues();
             }, function(err) {
                 console.log("There was an error creating the Recipe"+ err);
                 vm.error("There was an error creating the Recipe"+ err);
             });
+            vm.initRecipeValues();
         };
-        vm.error = function(error){
-            vm.ErrorMessage = error;
-            $('#ErrorMessage').show();
+        vm.error = function(msg){
+            vm.alert.Error = true;
+            vm.alert.Message = msg;
+            $('.ErrorMessage').show();
         };
-        vm.success = function(success){
-            vm.SuccessMessage = success;
-            $('#SuccessMessage').show();
+        vm.success = function(msg){
+            vm.alert.success = true;
+            vm.alert.Message = msg;
+            $('.SuccessMessage').show();
         };
 
         $scope.LoadThumbnail = function (input) {
@@ -219,7 +226,7 @@
                 reader.readAsDataURL(input.files[0]);
                 vm.uploadFile(input.files);
             }
-        }
+        };
 
         vm.uploadFile = function(fileList) {
             var url = 'http://vivediabetes.ddns.net:3000/Recipe/uploadImage';

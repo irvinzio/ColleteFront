@@ -1,18 +1,19 @@
 
-<div class="alert alert-danger alert-dismissible animate-show ErrorMessage hide" ng-hide="vm.success" role="alert">
+<div class="alert alert-danger alert-dismissible animate-show ErrorMessage" ng-show="{{vm.alert.success}}" role="alert">
     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
 <span class="sr-only">Error:</span>
-{{vm.ErrorMessage}}
+{{ vm.alert.Message}}
 Hubo un pedo haciendo lo que querias hacer!!
 </div>
-<div class="alert alert-success alert-dismissible animate-show SuccessMessage hide" ng-show="vm.success" role="alert">
+<div class="alert alert-success alert-dismissible animate-show SuccessMessage" ng-show="{{vm.alert.success}}" role="alert">
     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
 <span class="sr-only">Success:</span>
-{{vm.SuccessMessage}}
+{{ vm.alert.Message}}
 Todo salio chingon , como querias!!
 </div>
+<pre>{{vm.alert | json}}</pre>
 
 <style type="text/css">
 .hide{
