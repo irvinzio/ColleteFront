@@ -8,7 +8,7 @@
             <a href="#" class="thumbnail">
               <img id="RecepiImg" src="#" alt="your image">
             </a>
-            <input type="file" class="form-control" id="Image" ng-model="vm.recipeJson.recipe.url" onchange="angular.element(this).scope().LoadThumbnail(this)"
+            <input type="file" class="form-control" id="Image" files-input ng-model="vm.recipeJson.recipe.url" name = "imgUploader"  onchange="angular.element(this).scope().LoadThumbnail(this)"
               data-max-size="vm.FileSize" accept="image/gif, image/jpeg, image/png">
           </div>
           <div class="col-xs-6 col-md-6">
@@ -31,6 +31,23 @@
                 <input type="number" ng-model="vm.recipeJson.recipe.diners" class="form-control" id="Diners" placeholder="Comensales">
               </div>
             </form>
+          </div>
+          <div class="col-md-12 form-inline">
+              <div class="checkbox col-md-3">
+                  <label>
+                    <input type="checkbox" value="1"> Desayuno 
+                  </label>
+                </div>
+              <div class="checkbox col-md-3">
+                <label>
+                  <input type="checkbox" value="2"> Comida 
+                </label>
+              </div>
+              <div class="checkbox col-md-3">
+                <label>
+                  <input type="checkbox" value="3"> Cena 
+                </label>
+              </div>
           </div>
         </div>
       </div>
@@ -101,34 +118,20 @@
             <table class="table table-striped">
               <thead>
                 <tr>
-                  <th>Unidad</th>
-                  <th>Cantidad</th>
                   <th>Nombre</th>
+                  <th>Cantidad</th>
+                  <th>Unidad</th>
                 </tr>
               </thead>
               <tbody>
                 <tr ng-repeat="ingredient in vm.recipeJson.recipe_ingredient">
-                  <!-- <td>
-                                      <span ng-show="ingredient.editMode == null || ingredient.editMode == false">{{ingredient.qty}}</span>
-                                    <input type="number" ng-keyup="$event.keyCode == 13 ? vm.IngridientDataCancelEditMode() : null" ng-show="ingredient.editMode == true" ng-model="ingredient.qty" ng-change="vm.UpdateIngredientInfo(ingredient)"
-                                    value="{{ingredient.qty}}">
-                                  
-                                  </td> -->
-                  <td>{{vm.CatalogArray[vm.UnitsId][ingredient.idUnit].name}}</td>
-                  <td>{{ingredient.qty}}</td>
                   <td>{{ingredient.name}}</td>
+                  <td>{{ingredient.qty}}</td>
+                  <td>{{vm.CatalogArray[vm.UnitsId][ingredient.idUnit].name}}</td>
                   <td>
                     <a ng-click="vm.IngredientconfirmationModal(ingredient,$index)" title="eliminar">
                       <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                     </a>
-                    </a>
-                  </td>
-                  <td>
-                    <a ng-click="vm.updateIngridientData(ingredient)" title="editar">
-                      <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-                    </a>
-                    </p>
-                    </span>
                   </td>
                 </tr>
               </tbody>
@@ -188,6 +191,13 @@
           </div>
         </div>
       </div>
+      <div class="row">
+          <div class="col-md-12 text-center">
+              <button type="button" ng-click="vm.SaveRecepi()" class="btn btn-primary col-md-12">
+                <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
+              </button>
+          </div>
+      </div>
     </div>
     <div class="col-md-6">
       <div class="row well">
@@ -207,14 +217,6 @@
             </tbody>
           </table>
       </div>
-      <div class="row">
-        <div class="col-md-12 text-center">
-          <button type="button" ng-click="vm.SaveRecepi(vm.recipeJson)" class="btn btn-primary">
-            <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
-          </button>
-        </div>
-      </div>
     </div>
   </div>
-  <pre>{{vm.recipeJson | json}}</pre>
 </div>

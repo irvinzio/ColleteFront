@@ -17,11 +17,11 @@
         vm.Image = undefined;
         vm.FileSize = "500";
         var oldvalue =undefined;
-        
+        vm.fileArray = undefined;
         vm.initRecipeValues =  function (){
             vm.recipeJson = {};
             vm.recipeJson.recipe = {};
-            vm.recipeJson.recipe.url = "fake path";
+            vm.recipeJson.recipe.url = "fakePath";
             vm.recipeJson.recipe_ingredient = [];
             vm.recipeJson.recipe_procedure = [];
             vm.recipeJson.nutrition_facts = {};
@@ -160,8 +160,18 @@
             if(JsPopupService.confirmationJs())
                 vm.recipeJson.recipe_procedure.splice(index, 1);
         };
+        vm.SaveRecepi= function(){
+            RecipeService.uploadImage(vm.recipeJson.recipe.url).then(function(response) {
+                console.log("The image was uploaded");
+                var id = JSON.parse(response.data);
+                vm.recipeJson.recipe.url = id.uuid;
+                vm.SubmitRecipe(vm.recipeJson);
+            }, function(err) {
+                console.log("There was an error uploading the image"+ err);
+            });
+        };
         
-        vm.SaveRecepi= function(data){
+        vm.SubmitRecipe= function(data){
             var recipeAux = data;
             recipeAux.nutrition_facts.energeticContent =  data.nutrition_facts.energyK;
             recipeAux.nutrition_facts.totalFats = data.nutrition_facts.lipids;
@@ -220,23 +230,9 @@
                         .width(200)
                         .height(200);
                 };               
-                reader.onloadend = function() {
-                    vm.recipeJson.recipe.url = reader.result;
-                  }
                 reader.readAsDataURL(input.files[0]);
-                vm.uploadFile(input.files);
+                $scope.imageFile = input.files[0];
             }
-        };
-
-        vm.uploadFile = function(fileList) {
-            var url = 'http://vivediabetes.ddns.net:3000/Recipe/uploadImage';
-            var config = { headers: { 'Content-Type': undefined },
-                           transformResponse: angular.identity
-                         };
-            var promises = fileList.map(function(file) {
-                return $http.post(url, file, config);
-            });
-            return $q.all(promises);
         };
     }    
 })();
