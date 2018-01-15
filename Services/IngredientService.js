@@ -61,7 +61,10 @@ app.service('IngredientService', function($http, $q,Constants) {
           glycemicLoad:0,
           selenium: 0,
           ethanol: 0,
-          posphorus: 0
+          phosphorus: 0,
+          lipidsCalories: 0,
+          proteinsCalories: 0,
+          carbohydratesCalories:0
       }
       defer.resolve(IgredientProperties);
       return defer.promise;  
@@ -152,8 +155,17 @@ app.service('IngredientService', function($http, $q,Constants) {
             ethanol:{                
                 'displayName': 'Etanol'
             },            
-            posphorus:{                
+            phosphorus:{                
                 'displayName': 'fósforo'
+            },
+            lipidsCalories:{                
+                'displayName': 'Calorias en Lipidos'
+            },
+            proteinsCalories:{                
+                'displayName': 'Calorias en Proteinas'
+            },
+            carbohydratesCalories:{                
+                'displayName': 'Calorias en Carbohidratos'
             }  
         }     
         defer.resolve(IgredientProperties);

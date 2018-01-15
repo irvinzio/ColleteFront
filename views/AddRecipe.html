@@ -32,20 +32,21 @@
               </div>
             </form>
           </div>
+          <!-- ng-true-value="'YES'" ng-false-value="'NO'" -->
           <div class="col-md-12 form-inline">
               <div class="checkbox col-md-3">
                   <label>
-                    <input type="checkbox" value="1"> Desayuno 
+                    <input type="checkbox" ng-model="vm.recipeJson.recipe.session[0]"  ng-init="vm.recipeJson.recipe.session[0]=0" ng-true-value="'1'" ng-false-value="'0'"> Desayuno 
                   </label>
-                </div>
+              </div>
               <div class="checkbox col-md-3">
                 <label>
-                  <input type="checkbox" value="2"> Comida 
+                  <input type="checkbox" ng-model="vm.recipeJson.recipe.session[1]" ng-init="vm.recipeJson.recipe.session[1]=0" ng-true-value="'2'" ng-false-value="'0'"> Comida 
                 </label>
               </div>
               <div class="checkbox col-md-3">
                 <label>
-                  <input type="checkbox" value="3"> Cena 
+                  <input type="checkbox" ng-model="vm.recipeJson.recipe.session[2]" ng-init="vm.recipeJson.recipe.session[2]=0" ng-true-value="'3'" ng-false-value="'0'"> Cena 
                 </label>
               </div>
           </div>
@@ -60,8 +61,8 @@
               </div>
               <div class="form-group col-md-6">
                 <div class="input-group">
-                  <input type="number" ng-model="vm.IngredientSelected.qty" ng-change="vm.UpdateIngredietnValues(vm.IngredientSelected)" class="form-control"
-                    placeHolder="Cantidad" value="1">
+                  <input type="number" ng-model="vm.IngredientSelected.Unit.Qty" ng-change="vm.UpdateIngredietnValues(vm.IngredientSelected)" class="form-control"
+                    placeHolder="Cantidad"  step="0.1" >
                 </div>
               </div>
               <div class="form-group col-md-8">
@@ -192,6 +193,18 @@
         </div>
       </div>
       <div class="row">
+          <div class="col-md-12" >
+              <div class="col-md-4" >
+                  <ul>
+                    <li>{{vm.IngredientDisplayName['lipids'].displayName}} {{vm.recipeJson.nutrition_facts['lipidsCalories']}}</li>
+                    <li>{{vm.IngredientDisplayName['protein'].displayName}} {{vm.recipeJson.nutrition_facts['proteinsCalories']}}</li>
+                    <li>{{vm.IngredientDisplayName['carbohydrates'].displayName}} {{vm.recipeJson.nutrition_facts['carbohydratesCalories']}}</li>
+                  </ul>
+                </div>
+              <div class="col-md-8" >
+                <canvas id="pie"class="chart chart-pie" chart-data="data" chart-labels="labels" chart-colors="colors" chart-options="options"></canvas>
+              </div>
+          </div>
           <div class="col-md-12 text-center">
               <button type="button" ng-click="vm.SaveRecepi()" class="btn btn-primary col-md-12">
                 <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
@@ -219,4 +232,5 @@
       </div>
     </div>
   </div>
+  <pre>Messasge: {{vm.recipeJson | json}}</pre>
 </div>

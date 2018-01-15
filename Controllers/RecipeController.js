@@ -18,6 +18,9 @@
         vm.FileSize = "500";
         var oldvalue =undefined;
         vm.fileArray = undefined;
+        $scope.labels = ["Lipidos", "Proteinas", "Carbohidratos"];
+        $scope.colors = ['#72C02C', '#3498DB', '#717984', '#F1C40F'];
+
         vm.initRecipeValues =  function (){
             vm.recipeJson = {};
             vm.recipeJson.recipe = {};
@@ -28,8 +31,13 @@
             vm.IngredientSelected = {"carbohydrates": 0, "lipids":0, "protein":0, "energyK":0};
             vm.recipeJson.recipe.idRestaurant = {id:1};
             vm.recipeJson.recipe.category = "Entrada";
+            vm.recipeJson.nutrition_facts['lipidsCalories'] = 0;
+            vm.recipeJson.nutrition_facts['proteinsCalories'] = 0;
+            vm.recipeJson.nutrition_facts['carbohydratesCalories'] = 0;
             vm.alert= {success:false,Error:false,Message:''}
+            
             vm.ingredients = [];
+            
         };
 
         vm.initRecipeValues();
@@ -53,13 +61,6 @@
           vm.error(error);
           console.log(error);
         });
-        // //temp get for category
-        // CategoryService.GetCategories().then(function(response) {
-        //     vm.Category = response;   
-        // },function (error){
-        //   vm.error(error);
-        //   console.log(error);
-        // });
 
         BussinesService.GetBussines().then(function(response) {
             vm.Bussines = response;    
@@ -97,7 +98,7 @@
         vm.UpdateInfo = function (data){
             IngredientService.getIngredientById(data.id).then(function(response) {
                 vm.IngredientSelected = response.data[0];  
-                vm.IngredientSelected.Unit = {'IdUnit':response.data[0].idUnit,'Name': vm.CatalogArray[vm.UnitsId][response.data[0].idUnit].name};
+                vm.IngredientSelected.Unit = {'IdUnit':response.data[0].idUnit,'Name': vm.CatalogArray[vm.UnitsId][response.data[0].idUnit].name,'Qty':response.data[0].portion};
             },function (error){
               vm.error(error);
               console.log(error);
@@ -128,12 +129,18 @@
             if(!data.qty)data.qty = 1;
             var reqInfo = {'name': data.name,'qty':data.qty,'idUnit':data.Unit.IdUnit, 'properties': data,'idIngredient':data.id};
             vm.recipeJson.recipe_ingredient.push(reqInfo);
-            Object.keys(vm.recipeJson.nutrition_facts)
-            .forEach(function eachKey(key) {
-                if(vm.IngredientSelected[key]>0)      
-                    vm.recipeJson.nutrition_facts[key] +=  vm.IngredientSelected[key]*data.qty;
-                    vm.recipeJson.nutrition_facts[key] =  vm.recipeJson.nutrition_facts[key].round(2);
+            Object.keys(vm.recipeJson.nutrition_facts).forEach(function eachKey(key) {
+                if(vm.IngredientSelected[key]<0) return;
+                vm.recipeJson.nutrition_facts[key] +=  (vm.IngredientSelected[key]*data.qty)/data.portion;
+                vm.recipeJson.nutrition_facts[key] =  vm.recipeJson.nutrition_facts[key].round(2);   
             });
+            vm.recipeJson.nutrition_facts['lipidsCalories'] = ((vm.recipeJson.nutrition_facts['lipids'])*9).round(2);
+            vm.recipeJson.nutrition_facts['proteinsCalories'] = ((vm.recipeJson.nutrition_facts['protein'])*9).round(2);
+            vm.recipeJson.nutrition_facts['carbohydratesCalories'] = ((vm.recipeJson.nutrition_facts['carbohydrates'])*9).round(2);
+
+            $scope.data = [
+                [vm.recipeJson.nutrition_facts['lipidsCalories'], vm.recipeJson.nutrition_facts['proteinsCalories'], vm.recipeJson.nutrition_facts['carbohydratesCalories']]
+            ];
             console.log(vm.recipeJson.recipe_ingredient);
             vm.IngredientSelected = [];
         };
@@ -168,24 +175,25 @@
                 vm.SubmitRecipe(vm.recipeJson);
             }, function(err) {
                 console.log("There was an error uploading the image"+ err);
+                vm.error("Hubo un error guardando la imagen de la receta"+ err);
             });
         };
         
         vm.SubmitRecipe= function(data){
+            if(vm.recipeJson.recipe.session[0] || vm.recipeJson.recipe.session[1] || vm.recipeJson.recipe.session[2]){
+                vm.error("Se necesita elegir almenos una sesion");
+                return false;
+            }
+            
             var recipeAux = data;
-            recipeAux.nutrition_facts.energeticContent =  data.nutrition_facts.energyK;
-            recipeAux.nutrition_facts.totalFats = data.nutrition_facts.lipids;
             recipeAux.nutrition_facts.idUnit = 0;
             recipeAux.nutrition_facts.transAG = 0;
             delete recipeAux.nutrition_facts['grossWeight'];
             delete recipeAux.nutrition_facts['netWeight'];
-            delete recipeAux.nutrition_facts['energyK'];
             delete recipeAux.nutrition_facts['energyJ'];
-            delete recipeAux.nutrition_facts['lipids'];
             delete recipeAux.nutrition_facts['glycemicIndex'];
             delete recipeAux.nutrition_facts['glycemicLoad'];
             delete recipeAux.nutrition_facts['ethanol'];
-            delete recipeAux.nutrition_facts['posphorus'];
 
             recipeAux.recipe.category = recipeAux.recipe.category.id;
             recipeAux.recipe.idRestaurant = recipeAux.recipe.idRestaurant.id;
@@ -193,6 +201,9 @@
                 delete ingredient['properties'];
                 delete ingredient['name'];
             });
+            
+            vm.recipeJson.recipe.session = vm.recipeJson.recipe.session[1] + vm.recipeJson.recipe.session[1] + vm.recipeJson.recipe.session[1];
+
             recipeAux.recipe_nutritional =  {
                 "qty": 1,
                 "idUnit": 0
@@ -233,59 +244,6 @@
                 reader.readAsDataURL(input.files[0]);
                 $scope.imageFile = input.files[0];
             }
-        };
+        };        
     }    
 })();
-
-// {
-// 	"recipe": {
-// 		"idRestaurant": 1,
-// 		"name": "Tostada",
-// 		"url": "https://dietas.ninja/imagenes/como-hacer-la-de-la-sopa-de-tomate.jpg",
-//             "prepareTime": 20,
-//             "diners": 2,
-// 		"category": 1
-// 	},
-// 	"recipe_ingredient":[{
-// 		"idIngredient": 2,
-// 		"qty": 3,
-// 		"idUnit": 0
-// 	}],
-// 	"recipe_nutritional":  {
-// 		"qty": 1,
-// 		"idUnit": 0
-// 	},
-// 	"recipe_procedure": [
-// 		{
-// 		"description": "paso1",
-// 		"orderNo": 1
-// 		},
-// 		{
-// 		"description": "paso2",
-// 		"orderNo": 2
-// 		}
-// 	],
-// 	"nutrition_facts": {
-// 		"portion": 2.10, 
-// 		"idUnit": 0.00,
-// 		"energeticContent": 1000.00,
-// 		"protein": 10.00,
-// 		"totalFats": 1000.00,
-// 		"saturatedAG": 10.00,
-// 		"monoAG": 10.00,
-// 		"poliAG": 10.00,
-// 		"transAG": 10.00,
-// 		"cholesterol": 10.00,
-// 		"sodium": 10.00,
-// 		"carbohydrates": 10.00,
-// 		"sugarG": 10.00,
-// 		"fiber": 10.00,
-// 		"vitaminA": 10.00,
-// 		"ascorbicAcid": 10.00,
-// 		"folicAcid": 10.00,
-// 		"calcium": 10.00,
-// 		"iron": 10.00,
-// 		"potassium": 10.00,
-// 		"selenium": 10.00
-// 	}
-// }
