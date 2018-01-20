@@ -24,7 +24,7 @@
         vm.initRecipeValues =  function (){
             vm.recipeJson = {};
             vm.recipeJson.recipe = {};
-            vm.recipeJson.recipe.url = "fakePath";
+            vm.recipeJson.recipe.url = null;
             vm.recipeJson.recipe_ingredient = [];
             vm.recipeJson.recipe_procedure = [];
             vm.recipeJson.nutrition_facts = {};
@@ -135,8 +135,8 @@
                 vm.recipeJson.nutrition_facts[key] =  vm.recipeJson.nutrition_facts[key].round(2);   
             });
             vm.recipeJson.nutrition_facts['lipidsCalories'] = ((vm.recipeJson.nutrition_facts['lipids'])*9).round(2);
-            vm.recipeJson.nutrition_facts['proteinsCalories'] = ((vm.recipeJson.nutrition_facts['protein'])*9).round(2);
-            vm.recipeJson.nutrition_facts['carbohydratesCalories'] = ((vm.recipeJson.nutrition_facts['carbohydrates'])*9).round(2);
+            vm.recipeJson.nutrition_facts['proteinsCalories'] = ((vm.recipeJson.nutrition_facts['protein'])*4).round(2);
+            vm.recipeJson.nutrition_facts['carbohydratesCalories'] = ((vm.recipeJson.nutrition_facts['carbohydrates'])*4).round(2);
 
             $scope.data = [
                 [vm.recipeJson.nutrition_facts['lipidsCalories'], vm.recipeJson.nutrition_facts['proteinsCalories'], vm.recipeJson.nutrition_facts['carbohydratesCalories']]
@@ -168,6 +168,10 @@
                 vm.recipeJson.recipe_procedure.splice(index, 1);
         };
         vm.SaveRecepi= function(){
+            if(vm.recipeJson.recipe.url != null){
+                vm.SubmitRecipe(vm.recipeJson);
+                return false;
+            }
             RecipeService.uploadImage(vm.recipeJson.recipe.url).then(function(response) {
                 console.log("The image was uploaded");
                 var id = JSON.parse(response.data);
@@ -176,6 +180,7 @@
             }, function(err) {
                 console.log("There was an error uploading the image"+ err);
                 vm.error("Hubo un error guardando la imagen de la receta"+ err);
+                vm.SubmitRecipe(vm.recipeJson);
             });
         };
         
@@ -233,7 +238,7 @@
 
         $scope.LoadThumbnail = function (input) {
             if (input.files && input.files[0]) {
-                var reader = new FileReader();
+                var reader = new FileReader();  
         
                 reader.onload = function (e) {
                     $('#RecepiImg')
