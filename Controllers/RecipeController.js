@@ -127,7 +127,7 @@
         vm.AddIngredient= function (data){
             console.log(data);
             if(!data.qty)data.qty = 1;
-            var reqInfo = {'name': data.name,'qty':data.qty,'idUnit':data.Unit.IdUnit, 'properties': data,'idIngredient':data.id};
+            var reqInfo = {'name': data.name,'qty':data.Unit.Qty,'idUnit':data.Unit.IdUnit, 'properties': data,'idIngredient':data.id};
             vm.recipeJson.recipe_ingredient.push(reqInfo);
             Object.keys(vm.recipeJson.nutrition_facts).forEach(function eachKey(key) {
                 if(vm.IngredientSelected[key]<0) return;
