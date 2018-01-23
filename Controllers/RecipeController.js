@@ -20,28 +20,41 @@
         vm.fileArray = undefined;
         $scope.labels = ["Lipidos", "Proteinas", "Carbohidratos"];
         $scope.colors = ['#72C02C', '#3498DB', '#717984', '#F1C40F'];
+        vm.recipeJson = {};
+        vm.recipeJson.nutrition_facts = {};
 
         vm.initRecipeValues =  function (){
-            vm.recipeJson = {};
             vm.recipeJson.recipe = {};
+            vm.recipeJson.recipe.session = {
+                "0": 0,
+                "1": 0,
+                "2": 0
+              };
             vm.recipeJson.recipe.url = null;
             vm.recipeJson.recipe_ingredient = [];
             vm.recipeJson.recipe_procedure = [];
-            vm.recipeJson.nutrition_facts = {};
             vm.IngredientSelected = {"carbohydrates": 0, "lipids":0, "protein":0, "energyK":0};
             vm.recipeJson.recipe.idRestaurant = {id:1};
-            vm.recipeJson.recipe.category = "Entrada";
+            vm.recipeJson.recipe.category = 104;
             vm.recipeJson.nutrition_facts['lipidsCalories'] = 0;
             vm.recipeJson.nutrition_facts['proteinsCalories'] = 0;
             vm.recipeJson.nutrition_facts['carbohydratesCalories'] = 0;
+            vm.getIngredientsProperties();
             vm.alert= {success:false,Error:false,Message:''}
             
             vm.ingredients = [];
             
         };
+        vm.getIngredientsProperties = function(){
+            IngredientService.getIngredientProperties().then(function(response) {
+                vm.recipeJson.nutrition_facts = response; 
+            },function (error){
+              vm.error(error);
+              console.log(error);
+            });
+        };
 
         vm.initRecipeValues();
-
 
         CatalogService.getCatalog().then(function(response) {
             vm.Catalog = response.data;
@@ -64,13 +77,6 @@
 
         BussinesService.GetBussines().then(function(response) {
             vm.Bussines = response;    
-        },function (error){
-          vm.error(error);
-          console.log(error);
-        });
-
-        IngredientService.getIngredientProperties().then(function(response) {
-            vm.recipeJson.nutrition_facts = response; 
         },function (error){
           vm.error(error);
           console.log(error);
@@ -126,12 +132,12 @@
 
         vm.AddIngredient= function (data){
             console.log(data);
-            if(!data.qty)data.qty = 1;
+            if(!data.Unit.Qty)data.Unit.Qty = 1;
             var reqInfo = {'name': data.name,'qty':data.Unit.Qty,'idUnit':data.Unit.IdUnit, 'properties': data,'idIngredient':data.id};
             vm.recipeJson.recipe_ingredient.push(reqInfo);
             Object.keys(vm.recipeJson.nutrition_facts).forEach(function eachKey(key) {
                 if(vm.IngredientSelected[key]<0) return;
-                vm.recipeJson.nutrition_facts[key] +=  (vm.IngredientSelected[key]*data.qty)/data.portion;
+                vm.recipeJson.nutrition_facts[key] +=  (vm.IngredientSelected[key]*data.Unit.Qty)/data.portion;
                 vm.recipeJson.nutrition_facts[key] =  vm.recipeJson.nutrition_facts[key].round(2);   
             });
             vm.recipeJson.nutrition_facts['lipidsCalories'] = ((vm.recipeJson.nutrition_facts['lipids'])*9).round(2);
@@ -168,7 +174,7 @@
                 vm.recipeJson.recipe_procedure.splice(index, 1);
         };
         vm.SaveRecepi= function(){
-            if(vm.recipeJson.recipe.url != null){
+            if(vm.recipeJson.recipe.url == null){
                 vm.SubmitRecipe(vm.recipeJson);
                 return false;
             }
@@ -178,19 +184,20 @@
                 vm.recipeJson.recipe.url = id.uuid;
                 vm.SubmitRecipe(vm.recipeJson);
             }, function(err) {
-                console.log("There was an error uploading the image"+ err);
+                console.log("There was an error uploading the image");
+                console.log(err);
                 vm.error("Hubo un error guardando la imagen de la receta"+ err);
                 vm.SubmitRecipe(vm.recipeJson);
             });
         };
         
         vm.SubmitRecipe= function(data){
-            if(vm.recipeJson.recipe.session[0] || vm.recipeJson.recipe.session[1] || vm.recipeJson.recipe.session[2]){
+            if(!(vm.recipeJson.recipe.session[0] || vm.recipeJson.recipe.session[1] || vm.recipeJson.recipe.session[2])){
                 vm.error("Se necesita elegir almenos una sesion");
                 return false;
             }
             
-            var recipeAux = data;
+            var recipeAux = angular.copy(data);
             recipeAux.nutrition_facts.idUnit = 0;
             recipeAux.nutrition_facts.transAG = 0;
             delete recipeAux.nutrition_facts['grossWeight'];
@@ -215,12 +222,13 @@
             },
             console.log(recipeAux);
 
-            RecipeService.addRecipe(data).then(function(response) {
+            RecipeService.addRecipe(recipeAux).then(function(response) {
                 console.log("The Recipe was creating Successfully");
                 vm.success("The Recipe was creating Successfully");
                 vm.initRecipeValues();
             }, function(err) {
-                console.log("There was an error creating the Recipe"+ err);
+                console.log("There was an error creating the Recipe");
+                console.log(err);
                 vm.error("There was an error creating the Recipe"+ err);
             });
             vm.initRecipeValues();
