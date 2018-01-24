@@ -199,22 +199,22 @@
             
             var recipeAux = angular.copy(data);
             recipeAux.nutrition_facts.idUnit = 0;
-            recipeAux.nutrition_facts.transAG = 0;
+            //recipeAux.nutrition_facts.transAG = 0;
             delete recipeAux.nutrition_facts['grossWeight'];
             delete recipeAux.nutrition_facts['netWeight'];
             delete recipeAux.nutrition_facts['energyJ'];
             delete recipeAux.nutrition_facts['glycemicIndex'];
             delete recipeAux.nutrition_facts['glycemicLoad'];
             delete recipeAux.nutrition_facts['ethanol'];
+            delete recipeAux.nutrition_facts['transAG'];
 
-            recipeAux.recipe.category = recipeAux.recipe.category.id;
             recipeAux.recipe.idRestaurant = recipeAux.recipe.idRestaurant.id;
             recipeAux.recipe_ingredient.forEach(function(ingredient){
                 delete ingredient['properties'];
                 delete ingredient['name'];
             });
             
-            vm.recipeJson.recipe.session = vm.recipeJson.recipe.session[1] + vm.recipeJson.recipe.session[1] + vm.recipeJson.recipe.session[1];
+            recipeAux.recipe.session = vm.recipeJson.recipe.session[0] + vm.recipeJson.recipe.session[1] + vm.recipeJson.recipe.session[2];
 
             recipeAux.recipe_nutritional =  {
                 "qty": 1,
