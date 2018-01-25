@@ -35,7 +35,7 @@
             vm.recipeJson.recipe_procedure = [];
             vm.IngredientSelected = {"carbohydrates": 0, "lipids":0, "protein":0, "energyK":0};
             vm.recipeJson.recipe.idRestaurant = {id:1};
-            vm.recipeJson.recipe.category = 104;
+            vm.recipeJson.recipe.category = 0;
             vm.recipeJson.nutrition_facts['lipidsCalories'] = 0;
             vm.recipeJson.nutrition_facts['proteinsCalories'] = 0;
             vm.recipeJson.nutrition_facts['carbohydratesCalories'] = 0;
